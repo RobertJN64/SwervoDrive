@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swervo Drive Control</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/static/stylesheet.css">
+    <script src="{{ url_for('static', filename='jquery.js') }}"></script>
+</head>
+<body>
+    <div class="column">
+        <h1 style="text-align: center" >Swerve Drive Control</h1>
+        <div class="roundedDiv">
+            <h2 style='color: darkred; text-align:center' id ='constatus'>Connection Status: Waiting...</h2>
+        </div>
+        <div class="roundedDiv">
+            <table border="0" cellpadding="6" style="margin: 0 auto;">
+                <tr>
+                    <td></td>
+                    <td align="center">Left-Forward<br>
+                        <input type="image" src="/static/arrow_up_left.png" width="50" onclick="sendCMD('ltforward');"/>
+                    </td>
+                    <td align="center">Forward<br>
+                        <input type="image" src="/static/forward.png" width="50" onclick="sendCMD('forward');"/>
+                    </td>
+                    <td align="center">Right-Forward<br>
+                        <input type="image" src="/static/arrow_up_right.png" width="50" onclick="sendCMD('rtforward');"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">Spin Left<br>
+                        <input type="image" src="/static/spinleft.png" width="50" onclick="sendCMD('spinleft');"/>
+                    </td>
+                    <td align="center">Left<br>
+                        <input type="image" src="/static/left.png" width="50" onclick="sendCMD('left');"/>
+                    </td>
+                    <td align="center">Stop<br>
+                        <input type="image" src="/static/stop.png" width="50" onclick="sendCMD('stop');"/>
+                    </td>
+                    <td align="center">Right<br>
+                        <input type="image" src="/static/right.png" width="50" onclick="sendCMD('right');"/>
+                    </td>
+                    <td align="center">Spin Right<br>
+                        <input type="image" src="/static/spinright.png" width="50" onclick="sendCMD('spinright');"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td align="center">Left-Backward<br>
+                        <input type="image" src="/static/arrow_down_left.png" width="50" onclick="sendCMD('ltbackward');"/>
+                    </td>
+                    <td align="center">Backward<br>
+                        <input type="image" src="/static/backward.png" width="50" onclick="sendCMD('backward');"/>
+                    </td>
+                    <td align="center">Right-Backward<br>
+                        <input type="image" src="/static/arrow_down_right.png" width="50" onclick="sendCMD('rtbackward');"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="column">
+        <h1 style="text-align: center" >Debug</h1>
+        <div class="roundedDiv">
+            <textarea readonly rows="15" style="width: 99%" id="printtext"></textarea>
+        </div>
+    </div>
+    <p><button onclick="kill()" style="background-color: red" class="nice_button">Shutdown!</button></p>
+    <script>
+        function sendCMD(cmd) {
+          $.get('/drive_cmd/' + cmd)
+        }
+
+        function getStatus() {
+          $.ajax({
+            url: '/status',
+            success: function(data) {
+                document.getElementById('constatus').innerHTML = "Connection Status: Connected!";
+                document.getElementById("constatus").style.color = "lightgreen";
+            },
+            error: function() {
+                document.getElementById('constatus').innerHTML = "Connection Status: Failure!";
+                document.getElementById("constatus").style.color = "darkred";
+            },
+            timeout: 1000 //in milliseconds
+          });
+        }
+
+        getStatus();
+        setInterval(getStatus, 500);
+
+        function getPrints() {
+          $.get('/prints', {}, function(data) {
+            document.getElementById("printtext").value = data
+          })
+        }
+
+        getPrints()
+        setInterval(getPrints, 1000);
+
+        function getErrors() {
+          $.get('/traceback', {}, function(data) {
+            if (data != "") { alert(data); }
+          })
+        }
+
+        getErrors()
+        setInterval(getErrors, 1000);
+
+        function kill () {
+          $.get('/kill')
+        }
+
+    </script>
+    <script>
+        document.addEventListener('keydown', keypressed);
+
+        function keypressed (key) {
+            if (key.code == "KeyW") { sendCMD('forward') }
+            if (key.code == "KeyA") { sendCMD('left') }
+            if (key.code == "KeyS") { sendCMD('backward') }
+            if (key.code == "KeyD") { sendCMD('right') }
+            if (key.code == "KeyQ") { sendCMD('spinleft') }
+            if (key.code == "KeyE") { sendCMD('spinright') }
+            if (key.code == "Space") { sendCMD('stop') }
+
+        }
+    </script>
+</body>
+</html>
