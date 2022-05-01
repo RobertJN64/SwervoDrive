@@ -13,7 +13,11 @@ from flask import render_template
 
 from RobotManager import startRobotThread
 
-
+class Server:
+    @staticmethod
+    def shutdown():
+        pass
+s = Server
 
 lprint("Flask init...")
 app = flask.Flask(__name__)
