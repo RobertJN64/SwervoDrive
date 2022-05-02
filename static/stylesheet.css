@@ -32,3 +32,8 @@ body {
   width: 50px;
   position: absolute;
 }
+
+.wheelp {
+  position: absolute;
+  color: white;
+}

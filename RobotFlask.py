@@ -44,10 +44,10 @@ def handle_drive_cmd(cmd):
 
 @app.route('/wheelPos')
 def wheelpos():
-    data = {'fr': robot.swerve_fr.get_angle(),
-            'fl': robot.swerve_fl.get_angle(),
-            'br': robot.swerve_br.get_angle(),
-            'bl': robot.swerve_bl.get_angle()}
+    data = {'fr': robot.swerve_fr.get_info(),
+            'fl': robot.swerve_fl.get_info(),
+            'br': robot.swerve_br.get_info(),
+            'bl': robot.swerve_bl.get_info()}
     return data
 
 #region demo

@@ -21,10 +21,13 @@ class SwerveModule:
         self.motorController = MotorController(io_config['pwPin'], io_config['dirPin'], io_config['spdPin'])
         self.servo_offset = servo_offset
         self.inv_motor = inv_motor
+
+        self.current_speed = 0
         self.current_angle = 0
         self.current_motor_direction = True
 
     def stop(self):
+        self.current_speed = 0
         self.motorController.stop()
 
     def set_speed_and_angle(self, speed, angle):
@@ -47,11 +50,12 @@ class SwerveModule:
         set_servo(self.servoPin, angle)
         self.motorController.set_motor_speed_and_direction(speed, motor_direction)
 
-        self.current_angle = angle
         self.current_motor_direction = motor_direction
+        self.current_angle = angle
+        self.current_speed = speed
 
-    def get_angle(self):
-        return self.current_angle, self.current_motor_direction
+    def get_info(self):
+        return self.current_angle, self.current_motor_direction, self.current_speed
 
 class Robot:
     def __init__(self):
@@ -72,6 +76,6 @@ class Robot:
         for smodule in self.swerve_modules:
             smodule.set_speed_and_angle(speed=0, angle=0)
 
-    def set_all_modules_speed_and_angle(self, speed=0, angle=0):
+    def set_all_modules_speed_and_angle(self, speed, angle):
         for smodule in self.swerve_modules:
             smodule.set_speed_and_angle(speed=speed, angle=angle)

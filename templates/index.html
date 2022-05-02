@@ -63,6 +63,10 @@
             <img src="/static/wheel.png" class="wheelimg" id="fr">
             <img src="/static/wheel.png" class="wheelimg" id="bl">
             <img src="/static/wheel.png" class="wheelimg" id="br">
+            <p class="wheelp" id="flp">0</p>
+            <p class="wheelp" id="frp">0</p>
+            <p class="wheelp" id="blp">0</p>
+            <p class="wheelp" id="brp">0</p>
         </div>
     </div>
     <div class="column">
@@ -134,14 +138,24 @@
     </script>
     <script>
         document.getElementById('fl').style.left = '50px';
-        document.getElementById('br').style.left = '50px';
+        document.getElementById('bl').style.left = '50px';
         document.getElementById('fr').style.left = '250px';
-        document.getElementById('bl').style.left = '250px';
+        document.getElementById('br').style.left = '250px';
 
         document.getElementById('fl').style.top = '50px';
         document.getElementById('fr').style.top = '50px';
         document.getElementById('br').style.top = '250px';
         document.getElementById('bl').style.top = '250px';
+
+        document.getElementById('flp').style.left = '70px';
+        document.getElementById('blp').style.left = '70px';
+        document.getElementById('frp').style.left = '270px';
+        document.getElementById('brp').style.left = '270px';
+
+        document.getElementById('flp').style.top = '80px';
+        document.getElementById('frp').style.top = '80px';
+        document.getElementById('brp').style.top = '280px';
+        document.getElementById('blp').style.top = '280px';
 
         function getWheelPos() {
           $.get('/wheelPos', {}, function(data) {
@@ -149,6 +163,11 @@
             document.getElementById("fr").style.transform = 'rotate(' + data['fr'][0] + 'deg)';
             document.getElementById("bl").style.transform = 'rotate(' + data['bl'][0] + 'deg)';
             document.getElementById("br").style.transform = 'rotate(' + data['br'][0] + 'deg)';
+
+            document.getElementById("flp").innerHTML = data['fl'][2];
+            document.getElementById("frp").innerHTML = data['fr'][2];
+            document.getElementById("blp").innerHTML = data['bl'][2];
+            document.getElementById("brp").innerHTML = data['br'][2];
 
             if (data['fl'][1]) {
               document.getElementById("fl").src = '/static/wheel.png'
