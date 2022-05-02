@@ -12,8 +12,12 @@ class MotorController:
     def stop(self):
         pass # TODO - stop motor
 
+    def set_speed(self, speed):
+        pass #TODO - set speed
+
     def set_motor_speed_and_direction(self, speed, motor_direction):
-        pass #TODO - set motor speed and direction
+        self.set_speed(speed)
+        #TODO - set direction
 
 class SwerveModule:
     def __init__(self, io_config: dict, servo_offset: int, inv_motor: bool):
@@ -23,12 +27,16 @@ class SwerveModule:
         self.inv_motor = inv_motor
 
         self.current_speed = 0
-        self.current_angle = 0
-        self.current_motor_direction = True
+        self.current_angle = servo_offset
+        self.current_motor_direction = not inv_motor
 
     def stop(self):
         self.current_speed = 0
         self.motorController.stop()
+
+    def set_speed(self, speed):
+        self.current_speed = speed
+        self.motorController.set_speed(speed)
 
     def set_speed_and_angle(self, speed, angle):
         if speed == 0:
@@ -51,7 +59,11 @@ class SwerveModule:
         self.motorController.set_motor_speed_and_direction(speed, motor_direction)
 
         self.current_motor_direction = motor_direction
-        self.current_angle = angle
+
+        if self.inv_motor:
+            self.current_motor_direction = not self.current_motor_direction
+
+        self.current_angle = angle + self.servo_offset
         self.current_speed = speed
 
     def get_info(self):
@@ -79,3 +91,7 @@ class Robot:
     def set_all_modules_speed_and_angle(self, speed, angle):
         for smodule in self.swerve_modules:
             smodule.set_speed_and_angle(speed=speed, angle=angle)
+
+    def update_speed(self, speed):
+        for smodule in self.swerve_modules:
+            smodule.set_speed(speed)

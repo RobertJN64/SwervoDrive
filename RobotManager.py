@@ -10,6 +10,7 @@ dir_map = {
 }
 
 def handle_cmd(robot: Robot, cmd):
+    global speed
     if cmd == 'kill':
         robot.stop()
         return False
@@ -31,7 +32,17 @@ def handle_cmd(robot: Robot, cmd):
             robot.swerve_fr.set_speed_and_angle(speed, 135)
             robot.swerve_br.set_speed_and_angle(speed, 225)
             robot.swerve_bl.set_speed_and_angle(speed, 315)
-
+    elif cmd in ['speedup', 'speeddown']:
+        if cmd == 'speedup':
+            speed = min(speed + 10, 100)
+        elif cmd == 'speeddown':
+            speed = max(speed - 10, 0)
+        lprint("New Speed: ", speed)
+        robot.update_speed(speed)
+    elif cmd in ['motor', 'home']:
+        lprint("Unregistered cmd: ", cmd)
+    elif cmd == 'demo_error':
+        raise Exception("Demo Error!")
     else:
         raise Exception("Uknown cmd: " + str(cmd))
     return True
@@ -46,7 +57,7 @@ def worker(robot, incoming_cmds, err_list):
                 break
         except (Exception,):
             e = traceback.format_exc()
-            lprint('++++ERROR++++\n' + str(e) + '\n----ERROR----')
+            lprint('++++ERROR++++\n' + str(e) + '----ERROR----')
             err_list.append(e)
 
 def startRobotThread():

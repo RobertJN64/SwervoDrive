@@ -16,7 +16,9 @@
         <div class="roundedDiv">
             <table border="0" cellpadding="6" style="margin: 0 auto;">
                 <tr>
-                    <td></td>
+                    <td align="center">Increase Speed<br>
+                        <input type="image" src="/static/speed_up.png" width="50" onclick="sendCMD('speedup');"/>
+                    </td>
                     <td align="center">Left-Forward<br>
                         <input type="image" src="/static/arrow_up_left.png" width="50" onclick="sendCMD('ltforward');"/>
                     </td>
@@ -25,6 +27,9 @@
                     </td>
                     <td align="center">Right-Forward<br>
                         <input type="image" src="/static/arrow_up_right.png" width="50" onclick="sendCMD('rtforward');"/>
+                    </td>
+                    <td align="center">Home<br>
+                        <input type="image" src="/static/gohome.png" width="50" onclick="sendCMD('home');"/>
                     </td>
                 </tr>
                 <tr>
@@ -45,7 +50,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
+                    <td align="center">Decrease Speed<br>
+                        <input type="image" src="/static/speed_down.png" width="50" onclick="sendCMD('speeddown');"/>
+                    </td>
                     <td align="center">Left-Backward<br>
                         <input type="image" src="/static/arrow_down_left.png" width="50" onclick="sendCMD('ltbackward');"/>
                     </td>
@@ -55,10 +62,13 @@
                     <td align="center">Right-Backward<br>
                         <input type="image" src="/static/arrow_down_right.png" width="50" onclick="sendCMD('rtbackward');"/>
                     </td>
+                    <td align="center">Motor<br>
+                        <input type="image" src="/static/motor.png" width="50" onclick="sendCMD('motor');"/>
+                    </td>
                 </tr>
             </table>
         </div>
-        <div class="roundedDiv" style="position: relative; height: 400px">
+        <div class="roundedDiv" id='swervebox' style="position: relative; height: 400px">
             <img src="/static/wheel.png" class="wheelimg" id="fl">
             <img src="/static/wheel.png" class="wheelimg" id="fr">
             <img src="/static/wheel.png" class="wheelimg" id="bl">
@@ -77,7 +87,17 @@
     </div>
     <p><button onclick="kill()" style="background-color: red" class="nice_button">Shutdown!</button></p>
     <script>
+        var start_dt = new Date ( );
+        var last_mills = start_dt.getTime ( );
+        last_action = "";
+
         function sendCMD(cmd) {
+          var run_dt = new Date ( );
+          var mills = run_dt.getTime ( );
+          // If a dup, ignore if newer than .500ms
+          if (cmd == last_action && (mills - last_mills) <= 500) { return; }
+          last_mills = mills;
+          last_action = cmd;
           $.get('/drive_cmd/' + cmd)
         }
 
@@ -102,6 +122,7 @@
         function getPrints() {
           $.get('/prints', {}, function(data) {
             document.getElementById("printtext").value = data
+            document.getElementById("printtext").scrollTop = document.getElementById("printtext").scrollHeight
           })
         }
 
@@ -132,33 +153,39 @@
             if (key.code == "KeyD") { sendCMD('right') }
             if (key.code == "KeyQ") { sendCMD('spinleft') }
             if (key.code == "KeyE") { sendCMD('spinright') }
+            if (key.code == "KeyR") { sendCMD('speedup') }
+            if (key.code == "KeyF") { sendCMD('speeddown') }
             if (key.code == "Space") { sendCMD('stop') }
 
         }
     </script>
     <script>
-        document.getElementById('fl').style.left = '50px';
-        document.getElementById('bl').style.left = '50px';
-        document.getElementById('fr').style.left = '250px';
-        document.getElementById('br').style.left = '250px';
-
-        document.getElementById('fl').style.top = '50px';
-        document.getElementById('fr').style.top = '50px';
-        document.getElementById('br').style.top = '250px';
-        document.getElementById('bl').style.top = '250px';
-
-        document.getElementById('flp').style.left = '70px';
-        document.getElementById('blp').style.left = '70px';
-        document.getElementById('frp').style.left = '270px';
-        document.getElementById('brp').style.left = '270px';
-
-        document.getElementById('flp').style.top = '80px';
-        document.getElementById('frp').style.top = '80px';
-        document.getElementById('brp').style.top = '280px';
-        document.getElementById('blp').style.top = '280px';
-
         function getWheelPos() {
           $.get('/wheelPos', {}, function(data) {
+            var width = document.getElementById('swervebox').offsetWidth;
+            var center = width/2
+            var left = center - 100 - 25;
+            var right = center + 100 - 25;
+            document.getElementById('fl').style.left = left + 'px';
+            document.getElementById('bl').style.left = left + 'px';
+            document.getElementById('fr').style.left = right + 'px';
+            document.getElementById('br').style.left = right + 'px';
+
+            document.getElementById('fl').style.top = '50px';
+            document.getElementById('fr').style.top = '50px';
+            document.getElementById('br').style.top = '250px';
+            document.getElementById('bl').style.top = '250px';
+
+            document.getElementById('flp').style.left = left + 20 + 'px';
+            document.getElementById('blp').style.left = left + 20 + 'px';
+            document.getElementById('frp').style.left = right + 20 + 'px';
+            document.getElementById('brp').style.left = right + 20 + 'px';
+
+            document.getElementById('flp').style.top = '80px';
+            document.getElementById('frp').style.top = '80px';
+            document.getElementById('brp').style.top = '280px';
+            document.getElementById('blp').style.top = '280px';
+
             document.getElementById("fl").style.transform = 'rotate(' + data['fl'][0] + 'deg)';
             document.getElementById("fr").style.transform = 'rotate(' + data['fr'][0] + 'deg)';
             document.getElementById("bl").style.transform = 'rotate(' + data['bl'][0] + 'deg)';

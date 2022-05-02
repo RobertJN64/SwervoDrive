@@ -3,7 +3,7 @@ import flask
 from werkzeug.serving import make_server
 from time import sleep
 import threading
-from flask import render_template
+from flask import render_template, jsonify
 
 from RobotManager import startRobotThread
 
@@ -24,7 +24,7 @@ def home():
 
 @app.route('/status')
 def status():
-    return '200 ok'
+    return jsonify(success=True)
 
 @app.route('/prints')
 def prints():
@@ -40,7 +40,7 @@ def traceback():
 @app.route('/drive_cmd/<cmd>')
 def handle_drive_cmd(cmd):
     incoming_cmds.append(cmd)
-    return '200 ok'
+    return jsonify(success=True)
 
 @app.route('/wheelPos')
 def wheelpos():
@@ -54,12 +54,12 @@ def wheelpos():
 @app.route('/error')
 def error():
     incoming_cmds.append('demo_error')
-    return '200 ok'
+    return jsonify(success=True)
 
 @app.route('/print')
 def handle_print():
     lprint('This is a demo print statement!')
-    return '200 ok'
+    return jsonify(success=True)
 
 @app.route('/kill')
 def kill():
@@ -67,7 +67,7 @@ def kill():
     incoming_cmds.append('kill')
     t = threading.Thread(target=shutdown)
     t.start()
-    return '200 ok'
+    return jsonify(success=True)
 #endregion
 
 def serveApp():
