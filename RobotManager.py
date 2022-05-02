@@ -1,6 +1,7 @@
 from LogPrint import lprint
 from RobotHardware import Robot
 import threading
+import traceback
 
 speed = 50
 dir_map = {
@@ -12,13 +13,13 @@ def handle_cmd(robot: Robot, cmd):
     if cmd == 'kill':
         robot.stop()
         return False
-    if cmd in ['stop']:
+    elif cmd in ['stop']:
         lprint("Stop CMD recieved.")
         robot.stop()
-    if cmd in ['forward', 'backward', 'left', 'right', 'rtforward', 'ltforward', 'rtbackward', 'ltbackward']:
+    elif cmd in ['forward', 'backward', 'left', 'right', 'rtforward', 'ltforward', 'rtbackward', 'ltbackward']:
         lprint("Drive CMD received: ", cmd)
         robot.set_all_modules_speed_and_angle(speed, dir_map[cmd])
-    if cmd in ['spinleft', 'spinright']:
+    elif cmd in ['spinleft', 'spinright']:
         lprint("Turn CMD received: ", cmd)
         if cmd == 'spinleft':
             robot.swerve_br.set_speed_and_angle(speed, 45)
@@ -43,7 +44,8 @@ def worker(robot, incoming_cmds, err_list):
         try:
             if not handle_cmd(robot, cmd):
                 break
-        except (Exception,) as e:
+        except (Exception,):
+            e = traceback.format_exc()
             lprint('++++ERROR++++\n' + str(e) + '\n----ERROR----')
             err_list.append(e)
 
@@ -52,4 +54,4 @@ def startRobotThread():
     incoming_cmds = []
     err_list = []
     threading.Thread(target=worker, args=[robot, incoming_cmds, err_list]).start()
-    return incoming_cmds, err_list
+    return robot, incoming_cmds, err_list

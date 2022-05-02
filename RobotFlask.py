@@ -16,7 +16,7 @@ s = Server
 lprint("Flask init...")
 app = flask.Flask(__name__)
 lprint("Robot init...")
-incoming_cmds, err_list = startRobotThread()
+robot, incoming_cmds, err_list = startRobotThread()
 
 @app.route('/')
 def home():
@@ -41,6 +41,14 @@ def traceback():
 def handle_drive_cmd(cmd):
     incoming_cmds.append(cmd)
     return '200 ok'
+
+@app.route('/wheelPos')
+def wheelpos():
+    data = {'fr': robot.swerve_fr.get_angle(),
+            'fl': robot.swerve_fl.get_angle(),
+            'br': robot.swerve_br.get_angle(),
+            'bl': robot.swerve_bl.get_angle()}
+    return data
 
 #region demo
 @app.route('/error')

@@ -8,7 +8,8 @@ class FilterReqs:
     def write(self, data):
         if ('/status' not in data and
             '/prints' not in data and
-            '/traceback' not in data):
+            '/traceback' not in data and
+            '/wheelPos' not in data):
             self.stream.write(data)
             self.stream.flush()
 
@@ -19,4 +20,4 @@ print_log = []
 
 def lprint(*args):
     print(' '.join(map(str, args)))
-    print_log.append(' '.join(args))
+    print_log.append(' '.join(map(str, args)))

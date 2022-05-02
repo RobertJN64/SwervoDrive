@@ -27,3 +27,8 @@ body {
   float: left;
   width: 50%;
 }
+
+.wheelimg {
+  width: 50px;
+  position: absolute;
+}

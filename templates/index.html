@@ -58,6 +58,12 @@
                 </tr>
             </table>
         </div>
+        <div class="roundedDiv" style="position: relative; height: 400px">
+            <img src="/static/wheel.png" class="wheelimg" id="fl">
+            <img src="/static/wheel.png" class="wheelimg" id="fr">
+            <img src="/static/wheel.png" class="wheelimg" id="bl">
+            <img src="/static/wheel.png" class="wheelimg" id="br">
+        </div>
     </div>
     <div class="column">
         <h1 style="text-align: center" >Debug</h1>
@@ -125,6 +131,57 @@
             if (key.code == "Space") { sendCMD('stop') }
 
         }
+    </script>
+    <script>
+        document.getElementById('fl').style.left = '50px';
+        document.getElementById('br').style.left = '50px';
+        document.getElementById('fr').style.left = '250px';
+        document.getElementById('bl').style.left = '250px';
+
+        document.getElementById('fl').style.top = '50px';
+        document.getElementById('fr').style.top = '50px';
+        document.getElementById('br').style.top = '250px';
+        document.getElementById('bl').style.top = '250px';
+
+        function getWheelPos() {
+          $.get('/wheelPos', {}, function(data) {
+            document.getElementById("fl").style.transform = 'rotate(' + data['fl'][0] + 'deg)';
+            document.getElementById("fr").style.transform = 'rotate(' + data['fr'][0] + 'deg)';
+            document.getElementById("bl").style.transform = 'rotate(' + data['bl'][0] + 'deg)';
+            document.getElementById("br").style.transform = 'rotate(' + data['br'][0] + 'deg)';
+
+            if (data['fl'][1]) {
+              document.getElementById("fl").src = '/static/wheel.png'
+            }
+            else {
+              document.getElementById("fl").src = '/static/wheel_inv.png'
+            }
+
+            if (data['fr'][1]) {
+              document.getElementById("fr").src = '/static/wheel.png'
+            }
+            else {
+              document.getElementById("fr").src = '/static/wheel_inv.png'
+            }
+
+            if (data['bl'][1]) {
+              document.getElementById("bl").src = '/static/wheel.png'
+            }
+            else {
+              document.getElementById("bl").src = '/static/wheel_inv.png'
+            }
+
+            if (data['br'][1]) {
+              document.getElementById("br").src = '/static/wheel.png'
+            }
+            else {
+              document.getElementById("br").src = '/static/wheel_inv.png'
+            }
+          })
+        }
+
+        getWheelPos();
+        setInterval(getWheelPos, 1000);
     </script>
 </body>
 </html>
