@@ -1,15 +1,9 @@
-import sys
-from LogPrint import lprint, plog, FilterReqs
-
-sys.stdout = FilterReqs(sys.stdout)
-sys.stderr = FilterReqs(sys.stderr)
-
+from LogPrint import lprint, print_log
 import flask
 from werkzeug.serving import make_server
 from time import sleep
 import threading
 from flask import render_template
-
 
 from RobotManager import startRobotThread
 
@@ -34,7 +28,7 @@ def status():
 
 @app.route('/prints')
 def prints():
-    return '\n'.join(plog)
+    return '\n'.join(print_log)
 
 @app.route('/traceback')
 def traceback():

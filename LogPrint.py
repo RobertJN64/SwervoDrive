@@ -15,8 +15,8 @@ class FilterReqs:
     def flush(self):
         self.stream.flush()
 
-plog = []
+print_log = []
 
 def lprint(*args):
     print(' '.join(map(str, args)))
-    plog.append(' '.join(args))
+    print_log.append(' '.join(args))
