@@ -13,11 +13,11 @@ class MotorController:
         pass # TODO - stop motor
 
     def set_speed(self, speed):
-        pass #TODO - set speed
+        pass #TODO - set speed, start motor
 
     def set_motor_speed_and_direction(self, speed, motor_direction):
+        # TODO - set direction
         self.set_speed(speed)
-        #TODO - set direction
 
 class SwerveModule:
     def __init__(self, io_config: dict, servo_offset: int, inv_motor: bool):
