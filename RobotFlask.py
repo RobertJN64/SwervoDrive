@@ -74,7 +74,7 @@ def serveApp():
     global s
     lprint("Serving app!")
     #app.run(host="0.0.0.0", port=80)
-    s = make_server('localhost', 80, app, threaded=True)
+    s = make_server('localhost', 80, app, threaded=True) #change this on RPi to 0.0.0.0
     t = threading.Thread(target=s.serve_forever)
     t.start()
     print("Serving on http://localhost")
@@ -82,4 +82,5 @@ def serveApp():
 def shutdown():
     sleep(1)
     s.shutdown()
+    sleep(1)
     print("Shutdown")
