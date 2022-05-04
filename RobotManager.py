@@ -39,7 +39,7 @@ def handle_cmd(robot: Robot, cmd):
             speed = max(speed - 10, 0)
         lprint("New Speed: ", speed)
         robot.update_speed(speed)
-    elif cmd in ['motor', 'home']:
+    elif cmd in ['config', 'home']:
         lprint("Unregistered cmd: ", cmd)
     elif cmd == 'demo_error':
         raise Exception("Demo Error!")
