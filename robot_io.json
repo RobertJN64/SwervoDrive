@@ -1,25 +1,25 @@
 {
   "swerve_fr": {
-    "pwPin": 0,
-    "dirPin": 0,
+    "fwdPin": 0,
+    "revPin": 0,
     "spdPin": 0,
     "servoPin": 0
   },
   "swerve_fl": {
-    "pwPin": 0,
-    "dirPin": 0,
+    "fwdPin": 0,
+    "revPin": 0,
     "spdPin": 0,
     "servoPin": 0
   },
   "swerve_br": {
-    "pwPin": 0,
-    "dirPin": 0,
+    "fwdPin": 0,
+    "revPin": 0,
     "spdPin": 0,
     "servoPin": 0
   },
   "swerve_bl": {
-    "pwPin": 0,
-    "dirPin": 0,
+    "fwdPin": 0,
+    "revPin": 0,
     "spdPin": 0,
     "servoPin": 0
   }

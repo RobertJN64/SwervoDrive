@@ -1,28 +1,48 @@
+#import RPi.GPIO as GPIO
+#GPIO.setmode(GPIO.BCM)
 import json
 
 def set_servo(pin, angle):
     pass #TODO - set servo
 
 class MotorController:
-    def __init__(self, pwPin: int, dirPin: int, spdPin: int):
-        self.pwPin = pwPin
-        self.dirPin = dirPin
+    def __init__(self, fwdPin: int, revPin: int, spdPin: int):
+        self.fwdPin = fwdPin
+        self.revPin = revPin
         self.spdPin = spdPin
 
+        #GPIO.setup(self.fwdPin, GPIO.OUT)
+        #GPIO.setup(self.revPin, GPIO.OUT)
+        #GPIO.setup(self.spdPin, GPIO.OUT)
+
+        #GPIO.output(self.fwd_pin, GPIO.LOW)
+        #GPIO.output(self.rev_pin, GPIO.LOW)
+
+        #self.pwm = GPIO.PWM(spd_pin,1000) #1000 is freq
+
     def stop(self):
+        #GPIO.output(self.fwd_pin, GPIO.LOW)
+        #GPIO.output(self.rev_pin, GPIO.LOW)
         pass # TODO - stop motor
 
     def set_speed(self, speed):
+        #self.pwm.ChangeDutyCycle(speed)
         pass #TODO - set speed, start motor
 
     def set_motor_speed_and_direction(self, speed, motor_direction):
         # TODO - set direction
+        # if motor_direction:
+        #     GPIO.output(rev_pin, GPIO.LOW)
+        #     GPIO.output(fwd_pin, GPIO.HIGH)
+        # else:
+        #     GPIO.output(fwd_pin, GPIO.LOW)
+        #     GPIO.output(rev_pin, GPIO.HIGH)
         self.set_speed(speed)
 
 class SwerveModule:
     def __init__(self, io_config: dict, servo_offset: int, inv_motor: bool):
         self.servoPin = io_config["servoPin"]
-        self.motorController = MotorController(io_config['pwPin'], io_config['dirPin'], io_config['spdPin'])
+        self.motorController = MotorController(io_config['fwdPin'], io_config['revPin'], io_config['spdPin'])
         self.servo_offset = servo_offset
         self.inv_motor = inv_motor
 

@@ -15,13 +15,13 @@ def handle_cmd(robot: Robot, cmd):
         robot.stop()
         return False
     elif cmd in ['stop']:
-        lprint("Stop CMD recieved.")
+        lprint("Stop cmd recieved.")
         robot.stop()
     elif cmd in ['forward', 'backward', 'left', 'right', 'rtforward', 'ltforward', 'rtbackward', 'ltbackward']:
-        lprint("Drive CMD received: ", cmd)
+        lprint("Drive cmd received: ", cmd)
         robot.set_all_modules_speed_and_angle(speed, dir_map[cmd])
     elif cmd in ['spinleft', 'spinright']:
-        lprint("Turn CMD received: ", cmd)
+        lprint("Turn cmd received: ", cmd)
         if cmd == 'spinleft':
             robot.swerve_br.set_speed_and_angle(speed, 45)
             robot.swerve_bl.set_speed_and_angle(speed, 135)
