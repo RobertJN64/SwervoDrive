@@ -4,8 +4,12 @@ from werkzeug.serving import make_server
 from time import sleep
 import threading
 from flask import render_template, jsonify
+import json
 
 from RobotManager import startRobotThread
+
+with open('rpi.json') as f:
+    on_rpi = json.load(f)
 
 class Server:
     @staticmethod
@@ -73,8 +77,10 @@ def kill():
 def serveApp():
     global s
     lprint("Serving app!")
-    #app.run(host="0.0.0.0", port=80)
-    s = make_server('localhost', 80, app, threaded=True) #change this on RPi to 0.0.0.0
+    dest = 'localhost'
+    if on_rpi:
+        dest = '0.0.0.0'
+    s = make_server(dest, 80, app, threaded=True) #change this on RPi to 0.0.0.0
     t = threading.Thread(target=s.serve_forever)
     t.start()
     print("Serving on http://localhost")

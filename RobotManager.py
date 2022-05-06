@@ -13,6 +13,7 @@ def handle_cmd(robot: Robot, cmd):
     global speed
     if cmd == 'kill':
         robot.stop()
+        robot.shutdown()
         return False
     elif cmd in ['stop']:
         lprint("Stop cmd recieved.")

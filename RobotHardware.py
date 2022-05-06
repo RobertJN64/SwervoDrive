@@ -1,9 +1,9 @@
-#import RPi.GPIO as GPIO
-#GPIO.setmode(GPIO.BCM)
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
 import json
+from servosix import ServoSix
 
-def set_servo(pin, angle):
-    pass #TODO - set servo
+ss = ServoSix()
 
 class MotorController:
     def __init__(self, fwdPin: int, revPin: int, spdPin: int):
@@ -11,43 +11,40 @@ class MotorController:
         self.revPin = revPin
         self.spdPin = spdPin
 
-        #GPIO.setup(self.fwdPin, GPIO.OUT)
-        #GPIO.setup(self.revPin, GPIO.OUT)
-        #GPIO.setup(self.spdPin, GPIO.OUT)
+        GPIO.setup(self.fwdPin, GPIO.OUT)
+        GPIO.setup(self.revPin, GPIO.OUT)
+        GPIO.setup(self.spdPin, GPIO.OUT)
 
-        #GPIO.output(self.fwd_pin, GPIO.LOW)
-        #GPIO.output(self.rev_pin, GPIO.LOW)
+        GPIO.output(self.fwdPin, GPIO.LOW)
+        GPIO.output(self.revPin, GPIO.LOW)
 
-        #self.pwm = GPIO.PWM(spd_pin,1000) #1000 is freq
+        self.pwm = GPIO.PWM(spdPin,1000) #1000 is freq
         self.last_dir = True
 
     def stop(self):
-        #GPIO.output(self.fwd_pin, GPIO.LOW)
-        #GPIO.output(self.rev_pin, GPIO.LOW)
-        #self.pwm.ChangeDutyCycle(0)
-        pass # TODO - stop motor
+        GPIO.output(self.fwdPin, GPIO.LOW)
+        GPIO.output(self.revPin, GPIO.LOW)
+        self.pwm.ChangeDutyCycle(0)
 
     def _set_speed(self, speed):
-        #self.pwm.ChangeDutyCycle(speed)
-        pass
+        self.pwm.ChangeDutyCycle(speed)
 
     def set_speed(self, speed):
         self.set_motor_speed_and_direction(speed, self.last_dir)
 
     def set_motor_speed_and_direction(self, speed, motor_direction):
-        # TODO - set direction
-        # if motor_direction:
-        #     GPIO.output(rev_pin, GPIO.LOW)
-        #     GPIO.output(fwd_pin, GPIO.HIGH)
-        # else:
-        #     GPIO.output(fwd_pin, GPIO.LOW)
-        #     GPIO.output(rev_pin, GPIO.HIGH)
+        if motor_direction:
+            GPIO.output(self.revPin, GPIO.LOW)
+            GPIO.output(self.fwdPin, GPIO.HIGH)
+        else:
+            GPIO.output(self.fwdPin, GPIO.LOW)
+            GPIO.output(self.revPin, GPIO.HIGH)
         self._set_speed(speed)
         self.last_dir = motor_direction
 
 class SwerveModule:
     def __init__(self, io_config: dict, servo_offset: int, inv_motor: bool):
-        self.servoPin = io_config["servoPin"]
+        self.servoNumber = io_config["servoNumber"]
         self.motorController = MotorController(io_config['fwdPin'], io_config['revPin'], io_config['spdPin'])
         self.servo_offset = servo_offset
         self.inv_motor = inv_motor
@@ -81,7 +78,7 @@ class SwerveModule:
             angle -= 180
             motor_direction = not motor_direction
 
-        set_servo(self.servoPin, angle)
+        ss.set_servo(self.servoNumber, angle)
         self.motorController.set_motor_speed_and_direction(speed, motor_direction)
 
         self.current_motor_direction = motor_direction
@@ -121,3 +118,7 @@ class Robot:
     def update_speed(self, speed):
         for smodule in self.swerve_modules:
             smodule.set_speed(speed)
+
+    @staticmethod
+    def shutdown():
+        ss.cleanup()

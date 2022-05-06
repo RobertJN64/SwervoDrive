@@ -3,24 +3,24 @@
     "fwdPin": 0,
     "revPin": 0,
     "spdPin": 0,
-    "servoPin": 0
+    "servoNumber": 0
   },
   "swerve_fl": {
     "fwdPin": 0,
     "revPin": 0,
     "spdPin": 0,
-    "servoPin": 0
+    "servoNumber": 0
   },
   "swerve_br": {
     "fwdPin": 0,
     "revPin": 0,
     "spdPin": 0,
-    "servoPin": 0
+    "servoNumber": 0
   },
   "swerve_bl": {
     "fwdPin": 0,
     "revPin": 0,
     "spdPin": 0,
-    "servoPin": 0
+    "servoNumber": 0
   }
 }
