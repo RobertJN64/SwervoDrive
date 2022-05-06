@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 import json
-from servosix import ServoSix
+from servosix.servosix import ServoSix
 
 ss = ServoSix()
 

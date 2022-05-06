@@ -1,4 +1,4 @@
-from servosix import ServoSix
+from servosix.servosix import ServoSix
 from time import sleep
 
 ss = ServoSix()
