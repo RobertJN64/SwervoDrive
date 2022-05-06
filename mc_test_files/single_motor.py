@@ -3,9 +3,9 @@ from time import sleep
 
 
 #TODO - set pins
-fwd_pin = 0 #in1
-rev_pin = 0 #in2
-spd_pin = 0 #in3
+fwd_pin = 4 #in1
+rev_pin = 17 #in2
+spd_pin = 27 #en
 
 GPIO.setmode(GPIO.BCM)
 

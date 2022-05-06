@@ -19,15 +19,20 @@ class MotorController:
         #GPIO.output(self.rev_pin, GPIO.LOW)
 
         #self.pwm = GPIO.PWM(spd_pin,1000) #1000 is freq
+        self.last_dir = True
 
     def stop(self):
         #GPIO.output(self.fwd_pin, GPIO.LOW)
         #GPIO.output(self.rev_pin, GPIO.LOW)
+        #self.pwm.ChangeDutyCycle(0)
         pass # TODO - stop motor
 
-    def set_speed(self, speed):
+    def _set_speed(self, speed):
         #self.pwm.ChangeDutyCycle(speed)
-        pass #TODO - set speed, start motor
+        pass
+
+    def set_speed(self, speed):
+        self.set_motor_speed_and_direction(speed, self.last_dir)
 
     def set_motor_speed_and_direction(self, speed, motor_direction):
         # TODO - set direction
@@ -37,7 +42,8 @@ class MotorController:
         # else:
         #     GPIO.output(fwd_pin, GPIO.LOW)
         #     GPIO.output(rev_pin, GPIO.HIGH)
-        self.set_speed(speed)
+        self._set_speed(speed)
+        self.last_dir = motor_direction
 
 class SwerveModule:
     def __init__(self, io_config: dict, servo_offset: int, inv_motor: bool):
