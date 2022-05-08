@@ -47,7 +47,9 @@ if on_rpi:
 
 else:
     class ServoSix:
-        def __init__(self):
+        def __init__(self, servo_min=500, servo_max=2500):
+            self.servo_min = servo_min
+            self.servo_max = servo_max
             pass
 
         def set_servo(self, _servo, _angle):

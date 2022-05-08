@@ -1,10 +1,11 @@
 from servosix.servosix import ServoSix
-from time import sleep
+#from time import sleep
 
-ss = ServoSix()
-ss.set_servo(1, 10)
-sleep(1)
-ss.set_servo(1, 90)
-sleep(1)
-ss.set_servo(1, 170)
+ss = ServoSix(servo_min = 200, servo_max = 1200)
+while True:
+    angle = int(input("Angle: "))
+    ss.set_servo(1, angle)
+    ss.set_servo(2, angle)
+    ss.set_servo(3, angle)
+    ss.set_servo(4, angle)
 

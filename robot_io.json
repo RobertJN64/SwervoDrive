@@ -1,26 +1,26 @@
 {
   "swerve_fr": {
-    "fwdPin": 0,
-    "revPin": 0,
-    "spdPin": 0,
-    "servoNumber": 0
+    "fwdPin": 11,
+    "revPin": 8,
+    "spdPin": 7,
+    "servoNumber": 1
   },
   "swerve_fl": {
-    "fwdPin": 0,
-    "revPin": 0,
-    "spdPin": 0,
-    "servoNumber": 0
+    "fwdPin": 16,
+    "revPin": 20,
+    "spdPin": 21,
+    "servoNumber": 2
   },
   "swerve_br": {
-    "fwdPin": 0,
-    "revPin": 0,
-    "spdPin": 0,
-    "servoNumber": 0
+    "fwdPin": 13,
+    "revPin": 19,
+    "spdPin": 26,
+    "servoNumber": 3
   },
   "swerve_bl": {
-    "fwdPin": 0,
-    "revPin": 0,
-    "spdPin": 0,
-    "servoNumber": 0
+    "fwdPin": 5,
+    "revPin": 6,
+    "spdPin": 12,
+    "servoNumber": 4
   }
 }

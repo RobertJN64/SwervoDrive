@@ -3,7 +3,8 @@ GPIO.setmode(GPIO.BCM)
 import json
 from servosix.servosix import ServoSix
 
-ss = ServoSix()
+ss = ServoSix(servo_min=200, servo_max=1200)
+#DONT USE PINS 4, 17, 18, 27, 22, 23, 24, 25
 
 class MotorController:
     def __init__(self, fwdPin: int, revPin: int, spdPin: int):
@@ -19,6 +20,7 @@ class MotorController:
         GPIO.output(self.revPin, GPIO.LOW)
 
         self.pwm = GPIO.PWM(spdPin,1000) #1000 is freq
+        self.pwm.start(0)
         self.last_dir = True
 
     def stop(self):
@@ -102,6 +104,7 @@ class Robot:
         self.swerve_br = SwerveModule(robot_config['swerve_br'], servo_offset=180, inv_motor=True)
         self.swerve_bl = SwerveModule(robot_config['swerve_bl'], servo_offset=180, inv_motor=True)
         self.swerve_modules = [self.swerve_bl, self.swerve_br, self.swerve_fl, self.swerve_fr]
+        self.set_all_modules_speed_and_angle(0, 0)
 
     def stop(self):
         for smodule in self.swerve_modules:

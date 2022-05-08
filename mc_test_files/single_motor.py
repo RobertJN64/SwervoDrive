@@ -1,11 +1,9 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-
-#TODO - set pins
-fwd_pin = 4 #in1
-rev_pin = 17 #in2
-spd_pin = 27 #en
+fwd_pin = 23 #in1
+rev_pin = 24 #in2
+spd_pin = 25 #en
 
 GPIO.setmode(GPIO.BCM)
 
