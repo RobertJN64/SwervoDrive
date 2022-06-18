@@ -84,6 +84,8 @@ def install():
               "installed automatically. Try installing it manually and run the installer again.")
         return
 
+    print("Installing servosix")
+    os.system('cd servosix && sudo make && sudo make install')
 
     print("Installing finished! Please reboot your device. If a wifi network is not created,"
           "check the config files. For questions, contact robertjnies+swervedrive@gmail.com")
