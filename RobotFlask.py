@@ -57,6 +57,7 @@ def set_speed_dir():
 
 @app.route('/setnavseq', methods=['POST'])
 def set_nav_seq():
+    lprint("Loaded nav sequence with length:", len(request.json))
     incoming_cmds.append(('setnavseq', request.json))
     return jsonify(success=True)
 

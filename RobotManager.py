@@ -4,7 +4,7 @@ import threading
 import traceback
 import time
 
-speed = 50
+speed = 100
 dir_map = {
     'forward': 0, 'backward': 180, 'left': 270, 'right': 90,
     'rtforward': 45, 'rtbackward': 135, 'ltforward': 315, 'ltbackward': 225
@@ -14,8 +14,8 @@ def handle_cmd(robot: Robot, cmd, incoming_cmds):
     global speed
     if isinstance(cmd, tuple):
         if cmd[0] == 'setspeeddir':
-            lprint('Setting speed to:', cmd[1], '\and direction to:', cmd[2])
             robot.set_all_modules_speed_and_angle(cmd[1], cmd[2])
+
         if cmd[0] == 'setnavseq':
             data = cmd[1]
             speed = data[0]['speed']
@@ -44,10 +44,10 @@ def handle_cmd(robot: Robot, cmd, incoming_cmds):
         incoming_cmds.clear()
 
     elif cmd in ['forward', 'backward', 'left', 'right', 'rtforward', 'ltforward', 'rtbackward', 'ltbackward']:
-        lprint("Drive cmd received: ", cmd)
+        lprint("Drive cmd received:", cmd)
         robot.set_all_modules_speed_and_angle(speed, dir_map[cmd])
     elif cmd in ['spinleft', 'spinright']:
-        lprint("Turn cmd received: ", cmd)
+        lprint("Turn cmd received:", cmd)
         if cmd == 'spinleft':
             robot.swerve_br.set_speed_and_angle(speed, 45)
             robot.swerve_bl.set_speed_and_angle(speed, 135)
