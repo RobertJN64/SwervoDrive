@@ -11,7 +11,11 @@ dir_map = {
 
 def handle_cmd(robot: Robot, cmd):
     global speed
-    if cmd == 'kill':
+    if isinstance(cmd, tuple):
+        if cmd[0] == 'setspeeddir':
+            lprint('Setting speed to:', cmd[1], '\and direction to:', cmd[2])
+            robot.set_all_modules_speed_and_angle(cmd[1], cmd[2])
+    elif cmd == 'kill':
         robot.stop()
         robot.shutdown()
         return False

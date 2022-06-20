@@ -3,7 +3,7 @@ import flask
 from werkzeug.serving import make_server
 from time import sleep
 import threading
-from flask import render_template, jsonify
+from flask import render_template, jsonify, request
 import json
 
 from RobotManager import startRobotThread
@@ -45,6 +45,15 @@ def traceback():
 def handle_drive_cmd(cmd):
     incoming_cmds.append(cmd)
     return jsonify(success=True)
+
+@app.route('/setspeeddir')
+def set_speed_dir():
+    speed = int(request.args.get('spd'))
+    direction = int(request.args.get('dir'))
+    if speed is None or direction is None:
+        return jsonify(sucess=False)
+    incoming_cmds.append(('setspeeddir', speed, direction))
+    return jsonify(sucess=True)
 
 @app.route('/wheelPos')
 def wheelpos():
