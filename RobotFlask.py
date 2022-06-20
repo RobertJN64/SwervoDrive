@@ -48,12 +48,17 @@ def handle_drive_cmd(cmd):
 
 @app.route('/setspeeddir')
 def set_speed_dir():
-    speed = int(request.args.get('spd'))
-    direction = int(request.args.get('dir'))
+    speed = int(request.args.get('speed'))
+    direction = int(request.args.get('direction'))
     if speed is None or direction is None:
         return jsonify(sucess=False)
     incoming_cmds.append(('setspeeddir', speed, direction))
-    return jsonify(sucess=True)
+    return jsonify(success=True)
+
+@app.route('/setnavseq', methods=['POST'])
+def set_nav_seq():
+    incoming_cmds.append(('setnavseq', request.json))
+    return jsonify(success=True)
 
 @app.route('/wheelPos')
 def wheelpos():

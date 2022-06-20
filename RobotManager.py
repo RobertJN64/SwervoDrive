@@ -2,6 +2,7 @@ from LogPrint import lprint
 from RobotHardware import Robot
 import threading
 import traceback
+import time
 
 speed = 50
 dir_map = {
@@ -9,12 +10,30 @@ dir_map = {
     'rtforward': 45, 'rtbackward': 135, 'ltforward': 315, 'ltbackward': 225
 }
 
-def handle_cmd(robot: Robot, cmd):
+def handle_cmd(robot: Robot, cmd, incoming_cmds):
     global speed
     if isinstance(cmd, tuple):
         if cmd[0] == 'setspeeddir':
             lprint('Setting speed to:', cmd[1], '\and direction to:', cmd[2])
             robot.set_all_modules_speed_and_angle(cmd[1], cmd[2])
+        if cmd[0] == 'setnavseq':
+            data = cmd[1]
+            speed = data[0]['speed']
+            direction = data[0]['direction']
+            duration = data[0]['duration']
+            robot.set_all_modules_speed_and_angle(speed, direction)
+
+            if duration <= 1:
+                time.sleep(duration)
+                if len(data) > 1:
+                    incoming_cmds.append(('setnavseq', data[1:]))
+                else:
+                    incoming_cmds.append('stop')
+            else:
+                time.sleep(1)
+                data[0]['duration'] = duration - 1
+                incoming_cmds.append(('setnavseq', data))
+
     elif cmd == 'kill':
         robot.stop()
         robot.shutdown()
@@ -22,6 +41,8 @@ def handle_cmd(robot: Robot, cmd):
     elif cmd in ['stop']:
         lprint("Stop cmd recieved.")
         robot.stop()
+        incoming_cmds.clear()
+
     elif cmd in ['forward', 'backward', 'left', 'right', 'rtforward', 'ltforward', 'rtbackward', 'ltbackward']:
         lprint("Drive cmd received: ", cmd)
         robot.set_all_modules_speed_and_angle(speed, dir_map[cmd])
@@ -56,9 +77,9 @@ def worker(robot, incoming_cmds, err_list):
     while True:
         while len(incoming_cmds) == 0:
             pass
-        cmd = incoming_cmds.pop()
+        cmd = incoming_cmds.pop(0)
         try:
-            if not handle_cmd(robot, cmd):
+            if not handle_cmd(robot, cmd, incoming_cmds):
                 break
         except (Exception,):
             e = traceback.format_exc()
