@@ -6,6 +6,8 @@ from servosix.servosix import ServoSix
 ss = ServoSix(servo_min=200, servo_max=1200)
 #DONT USE PINS 4, 17, 18, 27, 22, 23, 24, 25
 
+rotation_lock_tolerance = 10
+
 class MotorController:
     def __init__(self, fwdPin: int, revPin: int, spdPin: int):
         self.fwdPin = fwdPin
@@ -80,6 +82,14 @@ class SwerveModule:
             angle -= 180
             motor_direction = not motor_direction
 
+        if self.current_angle < rotation_lock_tolerance and angle > 180 - rotation_lock_tolerance:
+            angle = 0
+            motor_direction = not motor_direction
+
+        if self.current_angle > 180 - rotation_lock_tolerance and angle < rotation_lock_tolerance:
+            angle = 179
+            motor_direction = not motor_direction
+
         ss.set_servo(self.servoNumber, angle)
         self.motorController.set_motor_speed_and_direction(speed, motor_direction)
 
@@ -87,6 +97,8 @@ class SwerveModule:
 
         if self.inv_motor:
             self.current_motor_direction = not self.current_motor_direction
+
+
 
         self.current_angle = angle + self.servo_offset
         self.current_speed = speed
