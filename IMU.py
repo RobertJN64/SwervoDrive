@@ -2,6 +2,8 @@ from time import sleep, time
 import threading
 import json
 
+scale_f = 0.8
+
 # some MPU6050 Registers and their Address
 PWR_MGMT_1 = 0x6B
 SMPLRT_DIV = 0x19
@@ -73,7 +75,7 @@ class IMU:
             while not self.robot.imu_calib:
                 gyro_z = self.read_raw_data(GYRO_ZOUT_H)
                 # Full scale range +/- 250 degree/C as per sensitivity scale factor
-                Gz = gyro_z / 131.0
+                Gz = (gyro_z / 131.0) * scale_f
                 gyrototal -= ((Gz - drift) / 20) * 10
                 self.robot.imu_angle = round(gyrototal, 3)
                 self.robot.imu_angle = self.robot.imu_angle % 360
