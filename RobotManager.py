@@ -14,14 +14,20 @@ def handle_cmd(robot: Robot, cmd, incoming_cmds):
     global speed
     if isinstance(cmd, tuple):
         if cmd[0] == 'setspeeddir':
-            robot.set_all_modules_speed_and_angle(cmd[1], cmd[2])
+            if robot.field_align:
+                robot.set_all_modules_speed_and_angle(cmd[1], cmd[2] - robot.imu_angle)
+            else:
+                robot.set_all_modules_speed_and_angle(cmd[1], cmd[2])
 
         if cmd[0] == 'setnavseq':
             data = cmd[1]
             speed = data[0]['speed']
             direction = data[0]['direction']
             duration = data[0]['duration']
-            robot.set_all_modules_speed_and_angle(speed, direction)
+            if robot.field_align:
+                robot.set_all_modules_speed_and_angle(speed, direction - robot.imu_angle)
+            else:
+                robot.set_all_modules_speed_and_angle(speed, direction)
 
             if duration <= 1:
                 time.sleep(duration)
@@ -45,7 +51,11 @@ def handle_cmd(robot: Robot, cmd, incoming_cmds):
 
     elif cmd in ['forward', 'backward', 'left', 'right', 'rtforward', 'ltforward', 'rtbackward', 'ltbackward']:
         lprint("Drive cmd received:", cmd)
-        robot.set_all_modules_speed_and_angle(speed, dir_map[cmd])
+        if robot.field_align:
+            robot.set_all_modules_speed_and_angle(speed, dir_map[cmd] - robot.imu_angle)
+        else:
+            robot.set_all_modules_speed_and_angle(speed, dir_map[cmd])
+
     elif cmd in ['spinleft', 'spinright']:
         lprint("Turn cmd received:", cmd)
         if cmd == 'spinleft':
@@ -65,7 +75,14 @@ def handle_cmd(robot: Robot, cmd, incoming_cmds):
             speed = max(speed - 10, 0)
         lprint("New Speed: ", speed)
         robot.update_speed(speed)
-    elif cmd in ['config', 'home']:
+    elif cmd == 'align':
+        robot.field_align = not robot.field_align
+        if robot.field_align:
+            lprint('Switching to field align mode.')
+        else:
+            lprint('Switching to robot align mode.')
+
+    elif cmd in ['home']:
         lprint("Unregistered cmd: ", cmd)
     elif cmd == 'demo_error':
         raise Exception("Demo Error!")

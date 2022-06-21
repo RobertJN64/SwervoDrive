@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 import json
 from servosix.servosix import ServoSix
+from IMU import start_monitor_thread
 
 ss = ServoSix(servo_min=200, servo_max=1200)
 #DONT USE PINS 4, 17, 18, 27, 22, 23, 24, 25
@@ -117,6 +118,11 @@ class Robot:
         self.swerve_bl = SwerveModule(robot_config['swerve_bl'], servo_offset=180, inv_motor=True)
         self.swerve_modules = [self.swerve_bl, self.swerve_br, self.swerve_fl, self.swerve_fr]
         self.set_all_modules_speed_and_angle(0, 0)
+
+        self.imu_angle = 0
+        self.imu_calib = False
+        self.field_align = False
+        start_monitor_thread(self)
 
     def stop(self):
         for smodule in self.swerve_modules:

@@ -87,6 +87,21 @@ def kill():
     t = threading.Thread(target=shutdown)
     t.start()
     return jsonify(success=True)
+
+@app.route('/getIMUAngle')
+def get_imu_angle():
+    data = {'angle': robot.imu_angle, 'calib': robot.imu_calib, 'mode': robot.field_align}
+    return data
+
+@app.route('/resetIMU')
+def reset_imu():
+    robot.imu_angle = 0
+    return jsonify(success=True)
+
+@app.route('/calibIMU')
+def calib_imu():
+    robot.imu_calib = True
+    return jsonify(success=True)
 #endregion
 
 def serveApp():

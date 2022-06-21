@@ -62,8 +62,8 @@
                     <td align="center">Right-Backward<br>
                         <input type="image" src="/static/arrow_down_right.png" width="50" onclick="sendCMD('rtbackward');"/>
                     </td>
-                    <td align="center">Config<br>
-                        <input type="image" src="/static/config.png" width="50" onclick="sendCMD('config');"/>
+                    <td align="center">Robot / Field Align<br>
+                        <input type="image" src="/static/config.png" width="50" onclick="sendCMD('align');"/>
                     </td>
                 </tr>
             </table>
@@ -84,8 +84,16 @@
         <div class="roundedDiv">
             <textarea readonly rows="15" style="width: 99%" id="printtext"></textarea>
         </div>
+        <div class="roundedDiv">
+            <p id="imuAngle">IMU Angle:</p>
+            <p id="imuCalib">IMU is Calibrating:</p>
+            <p id="robotMode">Robot Mode:</p>
+            <button onclick="reset_imu()" style="background-color: blue" class="nice_button">Reset IMU</button>
+            <button onclick="calib_imu()" style="background-color: blue" class="nice_button">Calibrate IMU</button>
+
+        </div>
+        <p><button onclick="kill()" style="background-color: red" class="nice_button">Shutdown!</button></p>
     </div>
-    <p><button onclick="kill()" style="background-color: red" class="nice_button">Shutdown!</button></p>
     <script>
         var start_dt = new Date ( );
         var last_mills = start_dt.getTime ( );
@@ -138,8 +146,32 @@
         getErrors()
         setInterval(getErrors, 1000);
 
+        function getIMU() {
+          $.get('/getIMUAngle', {}, function(data) {
+            document.getElementById("imuAngle").innerHTML = 'IMU Angle: ' + data['angle'];
+            document.getElementById("imuCalib").innerHTML = 'IMU is Calibrating: ' + data['calib'];
+            if (data['mode']) {
+              document.getElementById("robotMode").innerHTML = 'Robot Mode: Field Align';
+            }
+            else {
+              document.getElementById("robotMode").innerHTML = 'Robot Mode: Robot Align';
+            }
+          })
+        }
+
+        getIMU()
+        setInterval(getIMU, 1000);
+
         function kill () {
-          $.get('/kill')
+          $.get('/kill');
+        }
+
+        function reset_imu () {
+          $.get('/resetIMU');
+        }
+
+        function calib_imu () {
+          $.get('/calibIMU');
         }
 
     </script>
