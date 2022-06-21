@@ -9,7 +9,8 @@ class FilterReqs:
         if ('/status' not in data and
             '/prints' not in data and
             '/traceback' not in data and
-            '/wheelPos' not in data):
+            '/wheelPos' not in data and
+            '/getIMUAngle' not in data):
             self.stream.write(data)
             self.stream.flush()
 

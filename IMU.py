@@ -51,9 +51,9 @@ class IMU:
             value -= 65536
         return value
 
-    def read(self):
+    def read(self, killlist):
         while True:
-            self.robot.calib = True
+            self.robot.imu_calib = True
             gyrototal = 0
             print("CALIBRATING...")
             drift = 0
@@ -66,17 +66,27 @@ class IMU:
                 drift += Gz
 
             drift /= 100
-            self.robot.calib = False
+            self.robot.imu_calib = False
 
             starttime = time()
 
-            while not self.robot.calib:
+            while not self.robot.imu_calib:
                 gyro_z = self.read_raw_data(GYRO_ZOUT_H)
                 # Full scale range +/- 250 degree/C as per sensitivity scale factor
                 Gz = gyro_z / 131.0
                 gyrototal -= ((Gz - drift) / 20) * 10
                 self.robot.imu_angle = round(gyrototal, 3)
+                self.robot.imu_angle = self.robot.imu_angle % 360
                 sleep(0.05 - ((time() - starttime) % 0.05))
+
+                if self.robot.reset_imu:
+                    self.robot.reset_imu = False
+                    gyrototal = 0
+                    self.robot.imu_angle = 0
+                if killlist[0]:
+                    break
+            if killlist[0]:
+                break
 
 class IMU_Emulator:
     def __init__(self, robot):
@@ -85,7 +95,7 @@ class IMU_Emulator:
     def init(self):
         pass
 
-    def read(self):
+    def read(self, killlist):
         while True:
             self.robot.imu_calib = True
             sleep(5)
@@ -94,7 +104,17 @@ class IMU_Emulator:
 
             while not self.robot.imu_calib:
                 self.robot.imu_angle += 1
+                self.robot.imu_angle = self.robot.imu_angle%360
                 sleep(0.5)
+
+                if self.robot.reset_imu:
+                    self.robot.reset_imu = False
+                    self.robot.imu_angle = 0
+                if killlist[0]:
+                    break
+            if killlist[0]:
+                break
+
 
 def IMU_worker(robot):
     with open('rpi.json') as f:
@@ -105,7 +125,7 @@ def IMU_worker(robot):
         imu = IMU_Emulator(robot)
 
     imu.init()
-    imu.read()
+    imu.read(robot.killlist)
 
 
 def start_monitor_thread(robot):

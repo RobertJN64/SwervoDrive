@@ -95,7 +95,7 @@ def get_imu_angle():
 
 @app.route('/resetIMU')
 def reset_imu():
-    robot.imu_angle = 0
+    robot.reset_imu = True
     return jsonify(success=True)
 
 @app.route('/calibIMU')

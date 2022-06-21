@@ -122,6 +122,8 @@ class Robot:
         self.imu_angle = 0
         self.imu_calib = False
         self.field_align = False
+        self.reset_imu = False
+        self.killlist = [False]
         start_monitor_thread(self)
 
     def stop(self):
@@ -140,6 +142,6 @@ class Robot:
         for smodule in self.swerve_modules:
             smodule.set_speed(speed)
 
-    @staticmethod
-    def shutdown():
+    def shutdown(self):
         ss.cleanup()
+        self.killlist[0] = True
