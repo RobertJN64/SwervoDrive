@@ -82,11 +82,11 @@ class SwerveModule:
             angle -= 180
             motor_direction = not motor_direction
 
-        if self.current_angle < rotation_lock_tolerance and angle > 180 - rotation_lock_tolerance:
+        if (self.current_angle - self.servo_offset) < rotation_lock_tolerance and angle > 180 - rotation_lock_tolerance:
             angle = 0
             motor_direction = not motor_direction
 
-        if self.current_angle > 180 - rotation_lock_tolerance and angle < rotation_lock_tolerance:
+        if (self.current_angle - self.servo_offset) > 180 - rotation_lock_tolerance and angle < rotation_lock_tolerance:
             angle = 179
             motor_direction = not motor_direction
 
