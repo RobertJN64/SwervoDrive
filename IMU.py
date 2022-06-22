@@ -105,7 +105,7 @@ class IMU_Emulator:
             self.robot.imu_angle = 0
 
             while not self.robot.imu_calib:
-                self.robot.imu_angle += 1
+                self.robot.imu_angle += 0
                 self.robot.imu_angle = self.robot.imu_angle%360
                 sleep(0.5)
 
