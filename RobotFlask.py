@@ -55,6 +55,17 @@ def set_speed_dir():
     incoming_cmds.append(('setspeeddir', speed, direction))
     return jsonify(success=True)
 
+@app.route('/setspeeddirrot')
+def set_speed_dir_rot():
+    speed = int(request.args.get('speed'))
+    direction = int(request.args.get('direction'))
+    rotation = int(request.args.get('rotation'))
+    if speed is None or direction is None or rotation is None:
+        return jsonify(sucess=False)
+    incoming_cmds.append(('setspeeddirrot', speed, direction, rotation))
+    return jsonify(success=True)
+
+
 @app.route('/setnavseq', methods=['POST'])
 def set_nav_seq():
     lprint("Loaded nav sequence with length:", len(request.json))

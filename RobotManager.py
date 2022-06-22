@@ -19,6 +19,18 @@ def handle_cmd(robot: Robot, cmd, incoming_cmds):
             else:
                 robot.set_all_modules_speed_and_angle(cmd[1], cmd[2])
 
+        if cmd[0] == 'setspeeddirrot':
+            if robot.field_align:
+                spd = cmd[1]
+                base_target_direction = cmd[2]
+                rotation_force = cmd[3]
+                for module in robot.get_front_modules(base_target_direction):
+                    module.set_speed_and_angle(spd, base_target_direction + rotation_force - robot.imu_angle)
+                for module in robot.get_back_modules(base_target_direction):
+                    module.set_speed_and_angle(spd, base_target_direction - rotation_force - robot.imu_angle)
+            else:
+                lprint('Robot must be in field align mode for rotation while moving!')
+
         if cmd[0] == 'setnavseq':
             data = cmd[1]
             speed = data[0]['speed']

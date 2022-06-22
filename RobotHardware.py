@@ -48,7 +48,9 @@ class MotorController:
         self.last_dir = motor_direction
 
 class SwerveModule:
-    def __init__(self, io_config: dict, servo_offset: int, inv_motor: bool):
+    def __init__(self, name: str, io_config: dict, servo_offset: int, inv_motor: bool):
+        self.name = name
+
         self.servoNumber = io_config["servoNumber"]
         self.motorController = MotorController(io_config['fwdPin'], io_config['revPin'], io_config['spdPin'])
         self.servo_offset = servo_offset
@@ -107,17 +109,21 @@ class SwerveModule:
     def get_info(self):
         return self.current_angle, self.current_motor_direction, self.current_speed
 
+    def __repr__(self):
+        return self.name
+
 class Robot:
     def __init__(self):
         with open('robot_io.json') as f:
             robot_config = json.load(f)
 
-        self.swerve_fr = SwerveModule(robot_config['swerve_fr'], servo_offset=0, inv_motor=False)
-        self.swerve_fl = SwerveModule(robot_config['swerve_fl'], servo_offset=0, inv_motor=False)
-        self.swerve_br = SwerveModule(robot_config['swerve_br'], servo_offset=180, inv_motor=True)
-        self.swerve_bl = SwerveModule(robot_config['swerve_bl'], servo_offset=180, inv_motor=True)
+        self.swerve_fr = SwerveModule('swerve_fr', robot_config['swerve_fr'], servo_offset=0, inv_motor=False)
+        self.swerve_fl = SwerveModule('swerve_fl', robot_config['swerve_fl'], servo_offset=0, inv_motor=False)
+        self.swerve_br = SwerveModule('swerve_br', robot_config['swerve_br'], servo_offset=180, inv_motor=True)
+        self.swerve_bl = SwerveModule('swerve_bl', robot_config['swerve_bl'], servo_offset=180, inv_motor=True)
         self.swerve_modules = [self.swerve_bl, self.swerve_br, self.swerve_fl, self.swerve_fr]
         self.set_all_modules_speed_and_angle(0, 0)
+
 
         self.imu_angle = 0
         self.imu_calib = False
@@ -133,6 +139,28 @@ class Robot:
     def robot_init(self):
         for smodule in self.swerve_modules:
             smodule.set_speed_and_angle(speed=0, angle=0)
+
+    def _get_sorted_modules(self, target_direction):
+        unsorted = [(45, self.swerve_fr), (135, self.swerve_br), (225, self.swerve_bl), (315, self.swerve_fl)]
+        relative_target_dir = target_direction - self.imu_angle
+        sorted_tups = []
+        for tup in unsorted:
+            offset = abs(relative_target_dir - tup[0])
+            if offset > 180:
+                offset = 360 - offset
+            sorted_tups.append((offset, tup[1]))
+        sorted_tups.sort(key=lambda x:x[0])
+        sorted_mods = []
+        for item in sorted_tups:
+            sorted_mods.append(item[1])
+        return sorted_mods
+
+
+    def get_front_modules(self, target_direction):
+        return self._get_sorted_modules(target_direction)[:2]
+
+    def get_back_modules(self, target_direction):
+        return self._get_sorted_modules(target_direction)[2:]
 
     def set_all_modules_speed_and_angle(self, speed, angle):
         for smodule in self.swerve_modules:
