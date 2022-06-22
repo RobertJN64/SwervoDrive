@@ -6,6 +6,7 @@ import requests
 pygame.init()
 joysticks = []
 
+zero_speed = False
 spin_left = False
 spin_right = False
 reorient_wheel = False
@@ -32,6 +33,8 @@ while True:
             elif event.axis == 3:
                 lastAxis3 = event.value
         if event.type == pygame.JOYBUTTONDOWN:
+            if event.button == 1:
+                zero_speed = True
             if event.button == 9:
                 spin_left = True
             if event.button == 10:
@@ -39,6 +42,8 @@ while True:
             if event.button == 0:
                 reorient_wheel = True
         if event.type == pygame.JOYBUTTONUP:
+            if event.button == 1:
+                zero_speed = False
             if event.button == 9:
                 spin_left = False
             if event.button == 10:
@@ -53,9 +58,17 @@ while True:
     angle = angle%360
 
     rotation = math.degrees(math.atan2(lastAxis3, lastAxis2 + 0.0000000000001))
-    magnitude_2 = min(math.sqrt((lastAxis3 ** 2) + (lastAxis2 ** 2)) * 100, 100)
+    magnitude_2 = min(math.sqrt((lastAxis3 ** 2) + (lastAxis2 ** 2)) * 30, 30)
     rotation += 90
     rotation = rotation%360
+
+    if 45 < rotation < 135:
+        rotation_magnitude = magnitude_2
+    elif 225 < rotation < 315:
+        rotation_magnitude = -magnitude_2
+    else:
+        rotation_magnitude = 0
+
 
     if spin_right:
         print("Spin right")
@@ -67,5 +80,12 @@ while True:
         print("Lock wheels to 0")
         requests.get('http://192.168.4.1/setspeeddir?speed=1&direction=0')
     else:
+        if zero_speed:
+            magnitude = 10
         print("Target: ", magnitude, angle)
-        r = requests.get('http://192.168.4.1/setspeeddir?speed=' + str(int(magnitude)) + '&direction=' + str(int(angle)))
+        rurl = ('http://192.168.4.1/setspeeddirrot?speed=' + str(int(magnitude)) +
+                         '&direction=' + str(int(angle)) +
+                         '&rotation=' + str(int(rotation_magnitude)))
+        print(rurl)
+        r = requests.get(rurl)
+        #print(r.text)

@@ -64,7 +64,7 @@ class IMU:
                 gyro_z = self.read_raw_data(GYRO_ZOUT_H)
 
                 # Full scale range +/- 250 degree/C as per sensitivity scale factor
-                Gz = gyro_z / 131.0
+                Gz = (gyro_z / 131.0) * scale_f
                 drift += Gz
 
             drift /= 100
